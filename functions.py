@@ -1,7 +1,13 @@
 
+from datetime import datetime
+import threading
 import win32com.client as client
+import gui
+from tkinter import END
 
 
+def test():
+    print("Hello, testing")
 
 def open_file():
     """Open a file for editing."""
@@ -28,3 +34,19 @@ def save_file():
         text = txt_edit.get(1.0, tk.END)
         output_file.write(text)
     window.title(f"Simple Text Editor - {filepath}")
+
+def send_mail():
+    outlook = client.Dispatch("Outlook.Application")
+    message = outlook.CreateItem(0)
+    message.Display()
+    message.To = gui.email_entry.get()
+    message.CC = gui.manager_entry.get()
+    message.Subject = gui.subject_entry.get()
+    message.Body = gui.text_entry.get(0.0, END)
+
+def delaysending():
+    now = datetime.now()
+    from datetime import timedelta
+    run_at = now + timedelta(minutes=1)
+    delay = (run_at - now).total_seconds()
+    threading.Timer(delay, send_mail).start()
